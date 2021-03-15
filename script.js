@@ -36,15 +36,31 @@ const menu = {
     };
     this[courseName] = dishToAdd;
   },
+  getRandomDishFromCourse: function (courseName) {
+    const dishes = this._courses[courseName];
+    const randNum = Math.floor(Math.random() * dishes.length);
+    return dishes[randNum];
+  },
+  generateRandomMeal: function () {
+    const appetizer = this.getRandomDishFromCourse('appetizers');
+    const main = this.getRandomDishFromCourse('mains');
+    const dessert = this.getRandomDishFromCourse('desserts');
+    const totalPrice = appetizer.price + main.price + dessert.price;
+    return `Course meals:\nAppetizer: ${appetizer.name}\nMain: ${main.name}\nDessert: ${dessert.name}\nTotal price: ${totalPrice}`;
+  },
 };
 
-console.log(menu.courses);
-
 menu.addDishToCourse('appetizers', 'Pasta Chips', 10);
+menu.addDishToCourse('appetizers', 'Cranberry Brie Bites', 12);
+menu.addDishToCourse('appetizers', 'Sweet Potato Bites', 8);
+
 menu.addDishToCourse('mains', 'Lasagne', 25);
 menu.addDishToCourse('mains', 'Cordon Bleu', 40);
-menu.addDishToCourse('desserts', 'Chocolate Fudge', 10);
+menu.addDishToCourse('mains', 'Fried Salmon with Potato Salad', 35);
 
-console.log(menu.appetizers);
-console.log(menu.mains);
-console.log(menu.desserts);
+menu.addDishToCourse('desserts', 'Chocolate Fudge', 10);
+menu.addDishToCourse('desserts', 'Lava Cake', 13);
+menu.addDishToCourse('desserts', 'Strudel', 7);
+
+const meal = menu.generateRandomMeal();
+console.log(meal);
