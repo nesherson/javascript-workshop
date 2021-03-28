@@ -1,9 +1,12 @@
-function reverseString(str) {
-  let newStr = str.split('').map((letter, i, arr) => {
-    return arr[arr.length - i - 1];
-  });
+function factorialize(num) {
+  if (num === 1) {
+    return num;
+  }
+  if (num === 0) {
+    return 1;
+  }
 
-  return newStr.join('');
+  return num * factorialize(num - 1);
 }
 
-console.log(reverseString('hello'));
+console.log(factorialize(4));
