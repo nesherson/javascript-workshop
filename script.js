@@ -1,12 +1,11 @@
-function factorialize(num) {
-  if (num === 1) {
-    return num;
+function rangeOfNumbers(startNum, endNum) {
+  if (startNum === endNum) return [startNum];
+  if (startNum > endNum) return null;
+  if (startNum < endNum) {
+    const arr = rangeOfNumbers(startNum + 1, endNum);
+    arr.unshift(startNum);
+    return arr;
   }
-  if (num === 0) {
-    return 1;
-  }
-
-  return num * factorialize(num - 1);
 }
 
-console.log(factorialize(4));
+console.log(rangeOfNumbers(1, 5));
