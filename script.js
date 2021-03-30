@@ -1,11 +1,27 @@
-function rangeOfNumbers(startNum, endNum) {
-  if (startNum === endNum) return [startNum];
-  if (startNum > endNum) return null;
-  if (startNum < endNum) {
-    const arr = rangeOfNumbers(startNum + 1, endNum);
-    arr.unshift(startNum);
-    return arr;
+function extract(object, path) {
+  if (path.includes('.')) {
+    const property = path.split('.');
+    console.log(property);
+    return `${object}`;
+  } else if (!path.includes('.') && object.hasOwnProperty(path)) {
+    return object[path];
   }
+  return null;
 }
 
-console.log(rangeOfNumbers(1, 5));
+const TEAM = {
+  name: 'Buzzer Beaters',
+  coach: {
+    name: 'Nancy',
+    achievements: {
+      titles: 2,
+      hallOfFame: true,
+    },
+  },
+  location: {
+    town: 'Miami',
+    state: 'Florida',
+  },
+};
+
+console.log(extract(TEAM, 'coach.achievements.titles'));
