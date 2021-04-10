@@ -1,40 +1,46 @@
-function iterate(obj, path) {
-  if (obj.hasOwnProperty(path)) {
-    return obj[path];
+class HospitalEmployee {
+  constructor(name) {
+    this._name = name;
+    this._remainingVacationDays = 20;
   }
-  for (const property in obj) {
-    if (typeof obj[property] === 'object') {
-      const value = iterate(obj[property], path);
-      if (value) return value;
-    }
+
+  get name() {
+    return this._name;
   }
-  return null;
+
+  get remainingVacationDays() {
+    return this._remainingVacationDays;
+  }
+
+  takeVacationDays(daysOff) {
+    this._remainingVacationDays -= daysOff;
+  }
+
+  static generatePassword() {
+    return Math.floor(Math.random() * 10000);
+  }
 }
 
-function extract(object, path) {
-  if (path.includes('.')) {
-    const properties = path.split('.');
-    const lastProp = properties[properties.length - 1];
-
-    return iterate(object, lastProp);
-  } else if (!path.includes('.') && object.hasOwnProperty(path)) {
-    return object[path];
+class Nurse extends HospitalEmployee {
+  constructor(name, certifications) {
+    super(name);
+    this._certifications = certifications;
   }
-  return null;
-}
-const TEAM = {
-  name: 'Buzzer Beaters',
-  coach: {
-    name: 'Nancy',
-    achievements: {
-      titles: 2,
-      hallOfFame: true,
-    },
-  },
-  location: {
-    town: 'Miami',
-    state: 'Florida',
-  },
-};
 
-console.log(extract(TEAM, 'location.town'));
+  get certifications() {
+    return this._certifications;
+  }
+
+  addCertification(newCertification) {
+    this.certifications.push(newCertification);
+  }
+}
+
+const nurseOlynyk = new Nurse('Olynyk', ['Trauma', 'Pediatrics']);
+let nurseDurant = new Nurse('Durant', ['Orthopedics']);
+nurseOlynyk.takeVacationDays(5);
+console.log(nurseOlynyk.remainingVacationDays);
+nurseOlynyk.addCertification('Genetics');
+console.log(nurseOlynyk.certifications);
+
+module.exports = HospitalEmployee;
