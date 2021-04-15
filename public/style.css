@@ -185,6 +185,7 @@ footer {
     flex-direction: column;
     align-items: center;
   }
+
   .venue,
   .weather {
     margin: 10px auto;

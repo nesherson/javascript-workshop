@@ -4,6 +4,7 @@ const $submit = $('#button');
 const $destination = $('#destination');
 const $container = $('.container');
 const $venueDivs = [$('#venue1'), $('#venue2'), $('#venue3'), $('#venue4')];
+const $venues = $('#venues');
 const $weatherDiv = $('#weather1');
 const weekDays = [
   'Sunday',
@@ -51,14 +52,14 @@ const getForecast = async () => {
 
 // Render functions
 const renderVenues = (venues) => {
-  $venueDivs.forEach(($venue, index) => {
-    // Add your code here:
-    const venue = venues[index];
+  venues.forEach((item) => {
+    const venue = item;
     const venueIcon = venue.categories[0].icon;
     const venueImgSrc = `${venueIcon.prefix}bg_64${venueIcon.suffix}`;
     let venueContent = createVenueHTML(venue.name, venue.location, venueImgSrc);
-    $venue.append(venueContent);
+    $venues.append(venueContent);
   });
+
   $destination.append(`<h2>${venues[0].location.city}</h2>`);
 };
 
