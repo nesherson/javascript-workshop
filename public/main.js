@@ -35,14 +35,28 @@ const getVenues = async () => {
   }
 };
 
-const getForecast = () => {};
+const getForecast = async () => {
+  const urlToFetch = `${weatherUrl}?&q=${$input.val()}&APPID=${openWeatherKey}`;
+
+  try {
+    const response = await fetch(urlToFetch);
+    if (response.ok) {
+      const jsonResponse = await response.json();
+      return jsonResponse;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 // Render functions
 const renderVenues = (venues) => {
   $venueDivs.forEach(($venue, index) => {
     // Add your code here:
-
-    let venueContent = '';
+    const venue = venues[index];
+    const venueIcon = venue.categories[0].icon;
+    const venueImgSrc = `${venueIcon.prefix}bg_64${venueIcon.suffix}`;
+    let venueContent = createVenueHTML(venue.name, venue.location, venueImgSrc);
     $venue.append(venueContent);
   });
   $destination.append(`<h2>${venues[0].location.city}</h2>`);
@@ -50,8 +64,7 @@ const renderVenues = (venues) => {
 
 const renderForecast = (day) => {
   // Add your code here:
-
-  let weatherContent = '';
+  let weatherContent = createWeatherHTML(day);
   $weatherDiv.append(weatherContent);
 };
 
@@ -60,8 +73,11 @@ const executeSearch = () => {
   $weatherDiv.empty();
   $destination.empty();
   $container.css('visibility', 'visible');
-  getVenues();
-  getForecast();
+  getVenues().then((venues) => {
+    renderVenues(venues);
+  });
+  getForecast().then((forecast) => renderForecast(forecast));
+
   return false;
 };
 
