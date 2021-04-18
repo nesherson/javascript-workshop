@@ -1,5 +1,5 @@
 const reducer = (state = initialWagonState, action) => {
-  switch (action.payload) {
+  switch (action.type) {
     case 'gather':
       return {
         ...state,
@@ -36,3 +36,24 @@ const initialWagonState = {
   distance: 0,
   days: 0,
 };
+
+let wagon = reducer(undefined, {});
+console.log('Starting wagon: ', wagon);
+
+wagon = reducer(wagon, {
+  type: 'travel',
+  payload: 1,
+});
+console.log('Wagon after travelling: ', wagon);
+
+wagon = reducer(wagon, { type: 'gather' });
+console.log('Wagon after gathering: ', wagon);
+
+wagon = reducer(wagon, { type: 'tippedWagon' });
+console.log('Wagon after tipping: ', wagon);
+
+wagon = reducer(wagon, {
+  type: 'travel',
+  payload: 3,
+});
+console.log('Wagon after travelling for 3 days: ', wagon);
