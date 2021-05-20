@@ -1,43 +1,48 @@
 const http = require('http');
-const fs = require('fs');
 
 const server = http.createServer((req, res) => {
   const url = req.url;
   const method = req.method;
 
   if (url === '/') {
+    res.setHeader('Content-Type', 'text/html');
     res.write('<html>');
-    res.write('<head><title>Enter Message</title></head>');
+    res.write('<header><title>My server</title></header>');
+    res.write('<body>');
+    res.write('<h1>Hello</h1><p>Welcome to my server</p>');
     res.write(
-      '<body><form action="/message" method="POST"><input type="text" name="message"><button type="submit">Send</button></form></body>'
+      '<form action="/create-user" method="POST"><input type="text" placeholder="username" name="username"/><button type="submit">Send</button></form>'
+    );
+    res.write('</body>');
+    res.write('</html>');
+    return res.end();
+  }
+  if (url === '/users') {
+    res.setHeader('Content-Type', 'text/html');
+    res.write('<html>');
+    res.write('<header><title>Users</title></header>');
+    res.write(
+      '<body><h2>List of users</h2><ul><li>User 1</li><li>User 2</li><li>User 3</li></ul></body>'
     );
     res.write('</html>');
     return res.end();
   }
-  if (url === '/message' && method === 'POST') {
+  if (url === '/create-user' && method === 'POST') {
     const body = [];
 
     req.on('data', (chunk) => {
-      console.log('req(data) --> ', chunk);
       body.push(chunk);
     });
-    req.on('end', () => {
-      const parsedBody = Buffer.concat(body).toString();
-      console.log('parsedBody --> ', parsedBody);
-      const message = parsedBody.split('=')[1];
-      fs.writeFileSync('message.txt', message);
-    });
 
-    res.statusCode = 302;
-    res.setHeader('Location', '/');
-    return res.end();
+    return req.on('end', () => {
+      const parsedBody = Buffer.concat(body).toString();
+      const data = parsedBody.split('=')[1];
+      res.statusCode = 302;
+      res.setHeader('Location', '/');
+      console.log(data);
+      return res.end();
+    });
   }
-  res.setHeader('Content-Type', 'text/html');
-  res.write('<html>');
-  res.write('<head><title>My First Page</title></head>');
-  res.write('<body><h1>Hello from my server!</h1></body>');
-  res.write('</html>');
-  res.end();
 });
 
 server.listen(3000);
