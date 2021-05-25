@@ -1,48 +1,9 @@
 const http = require('http');
 
-const server = http.createServer((req, res) => {
-  const url = req.url;
-  const method = req.method;
+const express = require('express');
 
-  if (url === '/') {
-    res.setHeader('Content-Type', 'text/html');
-    res.write('<html>');
-    res.write('<header><title>My server</title></header>');
-    res.write('<body>');
-    res.write('<h1>Hello</h1><p>Welcome to my server</p>');
-    res.write(
-      '<form action="/create-user" method="POST"><input type="text" placeholder="username" name="username"/><button type="submit">Send</button></form>'
-    );
-    res.write('</body>');
-    res.write('</html>');
-    return res.end();
-  }
-  if (url === '/users') {
-    res.setHeader('Content-Type', 'text/html');
-    res.write('<html>');
-    res.write('<header><title>Users</title></header>');
-    res.write(
-      '<body><h2>List of users</h2><ul><li>User 1</li><li>User 2</li><li>User 3</li></ul></body>'
-    );
-    res.write('</html>');
-    return res.end();
-  }
-  if (url === '/create-user' && method === 'POST') {
-    const body = [];
+const app = express();
 
-    req.on('data', (chunk) => {
-      body.push(chunk);
-    });
-
-    return req.on('end', () => {
-      const parsedBody = Buffer.concat(body).toString();
-      const data = parsedBody.split('=')[1];
-      res.statusCode = 302;
-      res.setHeader('Location', '/');
-      console.log(data);
-      return res.end();
-    });
-  }
-});
+const server = http.createServer(app);
 
 server.listen(3000);
