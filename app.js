@@ -1,20 +1,24 @@
-const express = require('express');
 const path = require('path');
 
-const adminRoutes = require('./routes/admin');
-const userRoutes = require('./routes/shop');
-
+const express = require('express');
 const { urlencoded } = require('body-parser');
 
 const app = express();
 
-app.use(urlencoded({ extended: false }));
+const adminData = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
 
-app.use(adminRoutes);
-app.use(userRoutes);
+app.set('view engine', 'pug');
+app.set('views', 'views');
+
+app.use(urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/admin', adminData.routes);
+app.use(shopRoutes);
 
 app.use((req, res, next) => {
-  res.status(404).sendFile(path.join(__dirname, 'views', 'not-found.html'));
+  res.status(404).render('404');
 });
 
 app.listen(3000);
