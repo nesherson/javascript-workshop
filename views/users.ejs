@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('includes/head.ejs') %>
+  </head>
+  <body>
+    <%- include('includes/navigation.ejs') %>
+    <h3>List of users</h3>
+    
+    <% if (users.length > 0) { %>
+    <ul>
+      <% for (let user of users) { %>
+        <li><%= user.name %></li>
+      <% } %>
+    </ul>
+    <% } else { %>
+      <h1>No Products!</h1>
+    <% } %>
+  </body>
+</html>
