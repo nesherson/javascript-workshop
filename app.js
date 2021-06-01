@@ -1,20 +1,24 @@
-const express = require('express');
 const path = require('path');
+
+const express = require('express');
 const { urlencoded } = require('body-parser');
 
 const app = express();
 
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+
+const errorController = require('./controllers/error');
+
 app.set('view engine', 'ejs');
+app.set('views', 'views');
 
 app.use(urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const homepageRoute = require('./routes/homepage');
-const usersRoute = require('./routes/users');
-const pageNotFound = require('./routes/404');
+app.use('/admin', adminRoutes);
+app.use(shopRoutes);
 
-app.use(homepageRoute.routes);
-app.use(usersRoute);
-app.use(pageNotFound);
+app.use(errorController.get404);
 
 app.listen(3000);
