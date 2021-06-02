@@ -6,9 +6,26 @@
       </li>
       <li class="main-header__item">
         <a
+          href="/product-list"
+          class="<%= path === '/product-list' ? 'active' : '' %>"
+          >Product List</a
+        >
+      </li>
+      <li class="main-header__item">
+        <a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a>
+      </li>
+      <li class="main-header__item">
+        <a
           href="/admin/add-product"
           class="<%= path === '/admin/add-product' ? 'active' : '' %>"
           >Add Product</a
+        >
+      </li>
+      <li class="main-header__item">
+        <a
+          href="/admin/product-list"
+          class="<%= path === '/admin/product-list' ? 'active' : '' %>"
+          >Admin Product List</a
         >
       </li>
     </ul>
