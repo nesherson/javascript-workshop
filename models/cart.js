@@ -33,6 +33,7 @@ module.exports = class Cart {
       });
     });
   }
+
   static deleteProduct(id, productPrice) {
     fs.readFile(pathName, (err, fileContent) => {
       if (err) {
@@ -59,6 +60,17 @@ module.exports = class Cart {
       fs.writeFile(pathName, JSON.stringify(updatedCart), (err) => {
         console.log('Cart/deleteProduct - error: ', err);
       });
+    });
+  }
+
+  static getCart(cb) {
+    fs.readFile(pathName, (err, fileContent) => {
+      if (err) {
+        cb(null);
+      } else {
+        const cart = JSON.parse(fileContent);
+        cb(cart);
+      }
     });
   }
 };
