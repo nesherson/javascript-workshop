@@ -24,7 +24,6 @@ module.exports = class Product {
   }
 
   save() {
-    const pathName = path.join(rootDir, 'data', 'products.json');
     fs.readFile(pathName, (err, fileContent) => {
       let products = [];
 
@@ -48,6 +47,15 @@ module.exports = class Product {
           console.log(err)
         );
       }
+    });
+  }
+
+  static deleteById(id) {
+    getProductsFromFile((products) => {
+      const updatedProducts = products.filter((product) => product.id !== id);
+      fs.writeFile(pathName, JSON.stringify(updatedProducts), (err) => {
+        console.log('Person - Delete Error --> ', err);
+      });
     });
   }
 
