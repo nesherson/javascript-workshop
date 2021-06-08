@@ -56,9 +56,6 @@ exports.postEditProduct = (req, res, next) => {
       updatedPrice,
       updatedDescription
     );
-
-    console.log('postEditProduct --> ', productId);
-
     updatedProduct.save();
 
     res.redirect('/admin/product-list');
