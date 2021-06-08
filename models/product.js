@@ -25,14 +25,25 @@ module.exports = class Product {
 
   save() {
     getFileContentFromPath((products) => {
-      const updatedProducts = [...products, this];
-      fs.writeFile(pathName, JSON.stringify(updatedProducts), (err) => {
-        console.log('Product/save/err --> ', err);
-      });
+      if (!this.id) {
+        this.id = `${Math.random()}${this.title}`;
+        const updatedProducts = [...products, this];
+        fs.writeFile(pathName, JSON.stringify(updatedProducts), (err) => {
+          console.log('Product/save/err --> ', err);
+        });
+      } else {
+      }
     });
   }
 
   static fetchAllProducts(cb) {
     getFileContentFromPath(cb);
+  }
+
+  static findProductById(id, cb) {
+    getFileContentFromPath((products) => {
+      const product = products.find((product) => product.id == id);
+      cb(product);
+    });
   }
 };
