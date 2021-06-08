@@ -19,3 +19,14 @@ exports.getProductList = (req, res, next) => {
     });
   });
 };
+
+exports.getProductDetails = (req, res, next) => {
+  const productId = req.params.productId;
+  Product.findProductById(productId, (product) => {
+    res.render('shop/product-detail', {
+      pageTitle: productId,
+      path: '/shop/product-list',
+      product: product,
+    });
+  });
+};

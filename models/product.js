@@ -26,7 +26,7 @@ module.exports = class Product {
   save() {
     getFileContentFromPath((products) => {
       if (!this.id) {
-        this.id = `${Math.random()}${this.title}`;
+        this.id = `${Math.random()}`;
         const updatedProducts = [...products, this];
         fs.writeFile(pathName, JSON.stringify(updatedProducts), (err) => {
           console.log('Product/save/err --> ', err);
