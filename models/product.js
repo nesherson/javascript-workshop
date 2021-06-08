@@ -32,6 +32,14 @@ module.exports = class Product {
           console.log('Product/save/err --> ', err);
         });
       } else {
+        const updatedProducts = [...products];
+        const index = updatedProducts.findIndex(
+          (product) => product.id === this.id
+        );
+        updatedProducts[index] = this;
+        fs.writeFile(pathName, JSON.stringify(updatedProducts), (err) => {
+          console.log('Product/save/err --> ', err);
+        });
       }
     });
   }
@@ -42,7 +50,7 @@ module.exports = class Product {
 
   static findProductById(id, cb) {
     getFileContentFromPath((products) => {
-      const product = products.find((product) => product.id == id);
+      const product = products.find((product) => product.id === id);
       cb(product);
     });
   }

@@ -4,10 +4,10 @@
 </head>
 <body>
     <%- include('../includes/navigation.ejs') %>
-    <form class="product-form" action="/admin/add-product" method="POST">
+    <form class="product-form" action="/admin/edit-product" method="POST">
         <div class="form-control">
             <label for="Title">Title</label>
-            <input type="text" name="title" id="title" value="<%= product ? product.title : '' %>">
+            <input type="text" name="title" id="title" value="<%= product.title %>">
         </div>
         <div class="form-control">
             <label for="imageUrl">Image</label>
@@ -21,7 +21,8 @@
             <label for="description">Description</label>
             <textarea name="description" id="description" rows="5" id="name"><%= product.description %></textarea>
         </div>
-        <button class="btn" type="submit">Edit Product</button>
+            <input type="hidden" name="productId" value="<%= product.id %>">
+            <button class="btn" type="submit">Update Product</button>   
     </form>
     
 <%- include('../includes/end.ejs') %>

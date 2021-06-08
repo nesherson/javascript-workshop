@@ -30,12 +30,37 @@ exports.getEditProduct = (req, res, next) => {
     if (!product) {
       res.redirect('/');
     }
-    console.log('getEditProduct --> ', product);
 
     res.render('admin/edit-product', {
       pageTitle: 'Edit Product',
       path: '/admin/edit-product',
       product: product,
     });
+  });
+};
+
+exports.postEditProduct = (req, res, next) => {
+  const productId = req.body.productId;
+  Product.findProductById(productId, (product) => {
+    if (!product) {
+      res.redirect('/');
+    }
+    const updatedTitle = req.body.title;
+    const updatedImageUrl = req.body.imageUrl;
+    const updatedPrice = req.body.price;
+    const updatedDescription = req.body.description;
+    const updatedProduct = new Product(
+      productId,
+      updatedTitle,
+      updatedImageUrl,
+      updatedPrice,
+      updatedDescription
+    );
+
+    console.log('postEditProduct --> ', productId);
+
+    updatedProduct.save();
+
+    res.redirect('/admin/product-list');
   });
 };
