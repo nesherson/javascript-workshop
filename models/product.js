@@ -1,7 +1,8 @@
 const path = require('path');
 const fs = require('fs');
+const rootDir = require('../util/path');
 
-const pathName = path.join(__dirname, 'data');
+const pathName = path.join(rootDir, 'data', 'products.json');
 
 const getFileContentFromPath = (cb) => {
   fs.readFile(pathName, (err, fileContent) => {
@@ -29,5 +30,9 @@ module.exports = class Product {
         console.log('Product/save/err --> ', err);
       });
     });
+  }
+
+  static fetchAllProducts(cb) {
+    getFileContentFromPath(cb);
   }
 };
