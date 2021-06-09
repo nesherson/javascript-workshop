@@ -1,4 +1,3 @@
-const Product = require('./product');
 const path = require('path');
 const fs = require('fs');
 
@@ -55,6 +54,21 @@ module.exports = class Cart {
         const cart = JSON.parse(fileContent);
         cb(cart);
       }
+    });
+  }
+
+  static deleteProductFromCart(id, productPrice) {
+    fs.readFile(pathName, (err, fileContent) => {
+      let cart;
+      if (!err) {
+        cart = JSON.parse(fileContent);
+      }
+      const product = cart.products.find((product) => product.id === id);
+      cart.products = cart.products.filter((product) => product.id !== id);
+      cart.totalPrice -= productPrice * parseFloat(product.qty);
+      fs.writeFile(pathName, JSON.stringify(cart), (err) => {
+        console.log('Cart/deleteProductFromCart/err --> ', err);
+      });
     });
   }
 };
