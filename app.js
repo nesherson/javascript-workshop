@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const { urlencoded } = require('body-parser');
 
+const sequelize = require('./util/db');
+
 const app = express();
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -18,4 +20,12 @@ app.use(shopRoute);
 app.use('/admin', adminRoute);
 app.use(errorController.get404);
 
-app.listen(3000);
+sequelize
+  .sync()
+  .then((result) => {
+    console.log(result);
+    app.listen(3000);
+  })
+  .then((err) => {
+    console.log(err);
+  });
