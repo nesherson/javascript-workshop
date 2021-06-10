@@ -2,12 +2,12 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 exports.getIndexPage = (req, res, next) => {
-  Product.fetchAllProducts()
-    .then(([rows, fieldData]) => {
+  Product.findAll()
+    .then((products) => {
       res.render('shop/index.ejs', {
         pageTitle: 'Shop',
         path: '/',
-        products: rows,
+        products: products,
       });
     })
     .catch((err) => {
@@ -16,12 +16,12 @@ exports.getIndexPage = (req, res, next) => {
 };
 
 exports.getProductList = (req, res, next) => {
-  Product.fetchAllProducts()
-    .then(([rows, fieldData]) => {
+  Product.findAll()
+    .then((products) => {
       res.render('shop/product-list', {
         pageTitle: 'Product List',
         path: '/product-list',
-        products: rows,
+        products: products,
       });
     })
     .catch((err) => {
@@ -31,12 +31,12 @@ exports.getProductList = (req, res, next) => {
 
 exports.getProductDetails = (req, res, next) => {
   const productId = req.params.productId;
-  Product.findProductById(productId)
-    .then(([product]) => {
+  Product.findByPk(productId)
+    .then((product) => {
       res.render('shop/product-detail', {
-        pageTitle: productId,
+        pageTitle: product.title,
         path: '/shop/product-list',
-        product: product[0],
+        product: product,
       });
     })
     .catch((err) => {
