@@ -19,6 +19,17 @@ const adminRoute = require('./routes/admin');
 
 const errorController = require('./controllers/error');
 
+app.use((req, res, next) => {
+  User.findByPk(1)
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => {
+      console.log('app/use/user-findByPk/err --> ', err);
+    });
+});
+
 app.use(shopRoute);
 app.use('/admin', adminRoute);
 app.use(errorController.get404);
@@ -31,8 +42,17 @@ Product.belongsTo(User, {
 User.hasMany(Product);
 
 sequelize
-  .sync({ force: true })
+  .sync()
   .then((result) => {
+    return User.findByPk(1);
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({ name: 'Ben', email: 'ben@test.com' });
+    }
+    return user;
+  })
+  .then((user) => {
     app.listen(3000);
   })
   .then((err) => {
