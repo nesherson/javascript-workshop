@@ -4,6 +4,9 @@ const { urlencoded } = require('body-parser');
 
 const sequelize = require('./util/db');
 
+const Product = require('./models/product');
+const User = require('./models/user');
+
 const app = express();
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -20,8 +23,15 @@ app.use(shopRoute);
 app.use('/admin', adminRoute);
 app.use(errorController.get404);
 
+Product.belongsTo(User, {
+  constraints: true,
+  onDelete: 'CASCADE',
+});
+
+User.hasMany(Product);
+
 sequelize
-  .sync()
+  .sync({ force: true })
   .then((result) => {
     app.listen(3000);
   })
