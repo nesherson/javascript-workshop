@@ -199,6 +199,11 @@ form {
   cursor: pointer;
 }
 
+.danger {
+  border: 1px solid salmon;
+  color: salmon;
+}
+
 .btn:hover,
 .btn:active {
   background-color: #00695c;
