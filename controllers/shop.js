@@ -45,38 +45,62 @@ exports.getProductDetails = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  Cart.getCart((cart) => {
-    console.log('getCart --> ', cart);
-    Product.fetchAllProducts((products) => {
-      const cartProducts = [];
-
-      for (let product of products) {
-        const cartProductData = cart.products.find(
-          (cartItem) => cartItem.id === product.id
-        );
-
-        if (cartProductData) {
-          cartProducts.push({
-            productData: product,
-            qty: cartProductData.qty,
+  req.user
+    .getCart()
+    .then((cart) => {
+      return cart
+        .getProducts()
+        .then((products) => {
+          res.render('shop/cart', {
+            pageTitle: 'Cart',
+            path: '/cart',
+            cartProducts: products,
           });
-        }
-      }
-      res.render('shop/cart', {
-        pageTitle: 'Cart',
-        path: '/cart',
-        cartProducts: cartProducts,
-      });
+        })
+        .catch((err) => {
+          console.log('controllers/shop/getCart/getProducts/err --> ', err);
+        });
+    })
+    .catch((err) => {
+      console.log('controllers/shop/getCart/err --> ', err);
     });
-  });
 };
 
 exports.postAddToCart = (req, res, next) => {
   const productId = req.body.productId;
-  Product.findProductById(productId, (product) => {
-    Cart.addProductToCart(productId, product.price);
-    res.redirect('/product-list');
-  });
+  let fetchedCart;
+  let newQuantity = 1;
+  req.user
+    .getCart()
+    .then((cart) => {
+      fetchedCart = cart;
+      return cart.getProducts({ where: { id: productId } });
+    })
+    .then((products) => {
+      let product;
+      if (products.length > 0) {
+        product = products[0];
+      }
+
+      if (product) {
+        let prevQuantity = product.cartItem.quantity;
+        newQuantity = prevQuantity + 1;
+        return product;
+      }
+
+      return Product.findByPk(productId);
+    })
+    .then((product) => {
+      return fetchedCart.addProduct(product, {
+        through: { quantity: newQuantity },
+      });
+    })
+    .then(() => {
+      res.redirect('/cart');
+    })
+    .catch((err) => {
+      console.log('controllers/shop/postAddToCart/err --> ', err);
+    });
 };
 
 exports.postDeleteCartItem = (req, res, next) => {
