@@ -105,8 +105,19 @@ exports.postAddToCart = (req, res, next) => {
 
 exports.postDeleteCartItem = (req, res, next) => {
   const productId = req.body.productId;
-  Product.findProductById(productId, (product) => {
-    Cart.deleteProductFromCart(productId, product.price);
-    res.redirect('/cart');
-  });
+  req.user
+    .getCart()
+    .then((cart) => {
+      return cart.getProducts({ where: { id: productId } });
+    })
+    .then((products) => {
+      let product = products[0];
+      return product.cartItem.destroy();
+    })
+    .then(() => {
+      res.redirect('/cart');
+    })
+    .catch((err) => {
+      console.log('controllers/shop/postDeleteCartItem/err --> ', err);
+    });
 };
