@@ -11,12 +11,12 @@ app.use(urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-//const shopRoute = require('./routes/shop');
+const shopRoute = require('./routes/shop');
 const adminRoute = require('./routes/admin');
 
 const errorController = require('./controllers/error');
 
-// app.use(shopRoute);
+app.use(shopRoute);
 app.use('/admin', adminRoute);
 app.use(errorController.get404);
 
