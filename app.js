@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const { urlencoded } = require('body-parser');
 
-const mongoConnect = require('./util/db');
+const mongoConnect = require('./util/db').mongoConnect;
 
 const app = express();
 
@@ -11,8 +11,8 @@ app.use(urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-const shopRoute = require('./routes/shop');
-// const adminRoute = require('./routes/admin');
+//const shopRoute = require('./routes/shop');
+const adminRoute = require('./routes/admin');
 
 const errorController = require('./controllers/error');
 
