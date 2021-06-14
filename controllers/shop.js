@@ -29,20 +29,20 @@ exports.getProductList = (req, res, next) => {
     });
 };
 
-// exports.getProductDetails = (req, res, next) => {
-//   const productId = req.params.productId;
-//   Product.findByPk(productId)
-//     .then((product) => {
-//       res.render('shop/product-detail', {
-//         pageTitle: product.title,
-//         path: '/shop/product-list',
-//         product: product,
-//       });
-//     })
-//     .catch((err) => {
-//       console.log('controllers/shop/getProductDetails/err --> ', err);
-//     });
-// };
+exports.getProductDetails = (req, res, next) => {
+  const productId = req.params.productId;
+  Product.findById(productId)
+    .then((product) => {
+      res.render('shop/product-detail', {
+        pageTitle: product.title,
+        path: '/shop/product-list',
+        product: product,
+      });
+    })
+    .catch((err) => {
+      console.log('controllers/shop/getProductDetails/err --> ', err);
+    });
+};
 
 // exports.getCart = (req, res, next) => {
 //   req.user
