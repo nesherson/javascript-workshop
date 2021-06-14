@@ -3,7 +3,7 @@ const getDb = require('../util/db').getDb;
 
 class Product {
   constructor(id, title, imageUrl, price, description) {
-    this._id = new mongodb.ObjectID(id);
+    this._id = id ? new mongodb.ObjectID(id) : null;
     this.title = title;
     this.imageUrl = imageUrl;
     this.price = price;
@@ -58,6 +58,17 @@ class Product {
       })
       .catch((err) => {
         console.log('models/product/findById - err: ', err);
+      });
+  }
+
+  static deleteById(id) {
+    const db = getDb();
+    return db
+      .collection('products')
+      .deleteOne({ _id: new mongodb.ObjectID(id) })
+      .then()
+      .catch((err) => {
+        console.log('models/product/deleteById - err: ', err);
       });
   }
 }
