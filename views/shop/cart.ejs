@@ -9,9 +9,9 @@
             <% for (cartProduct of cartProducts) { %>
                 <li class="cart-item">
                   <p><%= cartProduct.title %></p>
-                  <span>Quantity: <%= cartProduct.cartItem.quantity %></span>
+                  <span>Quantity: <%= cartProduct.quantity %></span>
                   <form action="/cart-delete-item" method="POST">
-                    <input type="hidden" name="productId" value="<%= cartProduct.id %>">
+                    <input type="hidden" name="productId" value="<%= cartProduct._id %>">
                     <button class="btn danger" type="submit">Delete</button>
                   </form>
                 </li>

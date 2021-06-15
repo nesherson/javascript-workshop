@@ -50,6 +50,26 @@ class User {
       );
   }
 
+  getCart() {
+    const db = getDb();
+    const productIds = this.cart.items.map((item) => item.productId);
+    return db
+      .collection('products')
+      .find({ _id: { $in: productIds } })
+      .toArray()
+      .then((products) => {
+        return products.map((product) => {
+          const productQuantity = this.cart.items.find(
+            (item) => item.productId.toString() === product._id.toString()
+          ).quantity;
+          return { ...product, quantity: productQuantity };
+        });
+      })
+      .catch((err) => {
+        console.log('user/getCart - err: ', err);
+      });
+  }
+
   static findById(id) {
     const db = getDb();
     return db.collection('users').findOne({ _id: new mongodb.ObjectID(id) });
