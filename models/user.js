@@ -70,6 +70,20 @@ class User {
       });
   }
 
+  deleteItemFromCart(id) {
+    const updatedCartItems = this.cart.items.filter(
+      (item) => item.productId.toString() !== id.toString()
+    );
+
+    const db = getDb();
+    return db
+      .collection('users')
+      .updateOne(
+        { _id: new mongodb.ObjectID(this._id) },
+        { $set: { cart: { items: updatedCartItems } } }
+      );
+  }
+
   static findById(id) {
     const db = getDb();
     return db.collection('users').findOne({ _id: new mongodb.ObjectID(id) });
