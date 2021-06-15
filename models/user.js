@@ -1,24 +1,39 @@
-// id, name, email
+const mongodb = require('mongodb');
 
-const Sequelize = require('sequelize');
+const getDb = require('../util/db').getDb;
 
-const sequelize = require('../util/db');
+class User {
+  constructor(id, username, email, cart) {
+    this._id = id;
+    this.name = username;
+    this.email = email;
+    this.cart = cart;
+  }
 
-const User = sequelize.define('user', {
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    allowNull: false,
-    autoIncrement: true,
-  },
-  name: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  email: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-});
+  save() {
+    const db = getDb();
+    return db.collection('users').insertOne(this);
+  }
+
+  addToCart(product) {
+    // const cartProduct = this.cart.items.findIndex(
+    //   (cartProduct) => cartProduct._id === product._id
+    // );
+    const updatedCart = { items: [{ ...product, quantity: 1 }] };
+    const db = getDb();
+
+    return db
+      .collection('users')
+      .updateOne(
+        { _id: new mongodb.ObjectId(this._id) },
+        { $set: { cart: updatedCart } }
+      );
+  }
+
+  static findById(id) {
+    const db = getDb();
+    return db.collection('users').findOne({ _id: new mongodb.ObjectID(id) });
+  }
+}
 
 module.exports = User;
