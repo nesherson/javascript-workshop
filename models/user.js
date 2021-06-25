@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const Product = require('./product');
+
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -54,6 +56,28 @@ userSchema.methods.addToCart = function (product) {
 
   return this.save();
 };
+
+// userSchema.methods.getCart = function () {
+//   const productIds = this.cart.items.map((item) => item.productId);
+
+//   return Product.find({ _id: });
+
+//   return db
+//     .collection('products')
+//     .find({ _id: { $in: productIds } })
+//     .toArray()
+//     .then((products) => {
+//       return products.map((product) => {
+//         const productQuantity = this.cart.items.find(
+//           (item) => item.productId.toString() === product._id.toString()
+//         ).quantity;
+//         return { ...product, quantity: productQuantity };
+//       });
+//     })
+//     .catch((err) => {
+//       console.log('user/getCart - err: ', err);
+//     });
+// };
 
 module.exports = mongoose.model('User', userSchema);
 

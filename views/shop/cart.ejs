@@ -8,10 +8,10 @@
           <% if(cartProducts.length > 0) { %>
             <% for (cartProduct of cartProducts) { %>
                 <li class="cart-item">
-                  <p><%= cartProduct.title %></p>
+                  <p><%= cartProduct.productId.title %></p>
                   <span>Quantity: <%= cartProduct.quantity %></span>
                   <form action="/cart-delete-item" method="POST">
-                    <input type="hidden" name="productId" value="<%= cartProduct._id %>">
+                    <input type="hidden" name="productId" value="<%= cartProduct.productId._id %>">
                     <button class="btn danger" type="submit">Delete</button>
                   </form>
                 </li>
