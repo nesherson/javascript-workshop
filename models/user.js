@@ -60,7 +60,7 @@ userSchema.methods.removeFromCart = function (productId) {
     (item) => item.productId.toString() !== productId.toString()
   );
 
-  this.cart = { items: [] };
+  this.cart = { items: updatedCartItems };
   return this.save();
 };
 
