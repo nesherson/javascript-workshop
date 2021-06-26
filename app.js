@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const { urlencoded } = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session');
 
 require('dotenv').config();
 
@@ -15,6 +16,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 app.set('views', 'views');
+app.use(
+  session({ secret: 'my secret', resave: false, saveUninitialized: false })
+);
 
 app.use((req, res, next) => {
   User.findById('60d660c290673c3b6066f4db')
