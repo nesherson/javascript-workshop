@@ -86,8 +86,8 @@ exports.postDeleteCartItem = (req, res) => {
 };
 
 exports.getOrders = (req, res) => {
-  Order.find()
-    .then(() => {
+  Order.find({ 'user.userId': req.user._id })
+    .then((orders) => {
       res.render('shop/orders', {
         pageTitle: 'Your Orders',
         path: '/orders',
