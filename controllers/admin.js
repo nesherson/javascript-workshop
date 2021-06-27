@@ -5,7 +5,7 @@ exports.getAddProduct = (req, res, next) => {
   res.render('admin/add-product.ejs', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
-    isAuthenticated: req.isLoggedIn,
+    isAuthenticated: req.session.isLoggedIn,
   });
 };
 
@@ -16,7 +16,7 @@ exports.postAddProduct = (req, res) => {
     imageUrl,
     price,
     description,
-    userId: req.user._id,
+    userId: req.session.user._id,
   });
   product
     .save()
@@ -35,7 +35,7 @@ exports.getProductList = (req, res) => {
         pageTitle: 'Product List',
         path: '/admin/product-list',
         products: products,
-        isAuthenticated: req.isLoggedIn,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -55,7 +55,7 @@ exports.getEditProduct = (req, res) => {
         pageTitle: 'Edit Product',
         path: '/admin/edit-product',
         product: product,
-        isAuthenticated: req.isLoggedIn,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
