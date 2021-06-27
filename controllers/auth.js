@@ -14,10 +14,13 @@ exports.postLogin = (req, res) => {
     .then((user) => {
       req.session.isLoggedIn = true;
       req.session.user = user;
-      res.redirect('/');
-      //return req.session.save();
+      req.session.save((err) => {
+        if (err) {
+          console.log('controllers/auth/postLogin/sessionSave - err: ', err);
+        }
+        res.redirect('/');
+      });
     })
-    //.then(() => {})
     .catch((err) => {
       console.log('app/User.findById - err: ', err);
     });
@@ -31,14 +34,3 @@ exports.postLogout = (req, res) => {
     res.redirect('/');
   });
 };
-
-// app.use((req, res, next) => {
-//   User.findById('60d660c290673c3b6066f4db')
-//     .then((user) => {
-//       req.user = user;
-//       next();
-//     })
-//     .catch((err) => {
-//       console.log('app/User.findById - err: ', err);
-//     });
-// });
