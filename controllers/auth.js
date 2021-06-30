@@ -26,6 +26,16 @@ exports.postLogin = (req, res) => {
     });
 };
 
+exports.getSignup = (req, res, next) => {
+  res.render('auth/signup', {
+    path: '/signup',
+    pageTitle: 'Signup',
+    isAuthenticated: false,
+  });
+};
+
+exports.postSignup = (req, res, next) => {};
+
 exports.postLogout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
