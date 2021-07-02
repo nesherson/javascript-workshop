@@ -8,7 +8,8 @@ exports.getIndexPage = (req, res) => {
         pageTitle: 'Shop',
         path: '/',
         products: products,
-        isAuthenticated: req.session.isLoggedIn,
+        // isAuthenticated: req.session.isLoggedIn,
+        // csrfToken: req.csrfToken(),
       });
     })
     .catch((err) => {
@@ -23,7 +24,7 @@ exports.getProductList = (req, res) => {
         pageTitle: 'Product List',
         path: '/product-list',
         products: products,
-        isAuthenticated: req.session.isLoggedIn,
+        // isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -39,7 +40,7 @@ exports.getProductDetails = (req, res) => {
         pageTitle: product.title,
         path: '/shop/product-list',
         product: product,
-        isAuthenticated: req.session.isLoggedIn,
+        // isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -57,7 +58,7 @@ exports.getCart = (req, res) => {
         pageTitle: 'Cart',
         path: '/cart',
         cartProducts: products,
-        isAuthenticated: req.session.isLoggedIn,
+        // isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -96,7 +97,7 @@ exports.getOrders = (req, res) => {
         pageTitle: 'Your Orders',
         path: '/orders',
         orders: orders,
-        isAuthenticated: req.session.isLoggedIn,
+        // isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -105,16 +106,18 @@ exports.getOrders = (req, res) => {
 };
 
 exports.postOrder = (req, res) => {
+  console.log('postOrder/user: ', req.user);
   req.user
     .populate('cart.items.productId')
     .execPopulate()
     .then((user) => {
+      console.log('postOrder/populate/user: ', user);
       const products = user.cart.items.map((item) => {
         return { product: { ...item.productId._doc }, quantity: item.quantity };
       });
       const order = new Order({
         user: {
-          name: req.user.name,
+          email: req.user.email,
           userId: req.user._id,
         },
         products: products,
