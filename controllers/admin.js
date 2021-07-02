@@ -1,7 +1,6 @@
 const Product = require('../models/product');
 
-exports.getAddProduct = (req, res, next) => {
-  console.log('--getAddProduct--');
+exports.getAddProduct = (req, res) => {
   res.render('admin/add-product.ejs', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
@@ -88,7 +87,7 @@ exports.postEditProduct = (req, res) => {
     });
 };
 
-exports.postDeleteProduct = (req, res, next) => {
+exports.postDeleteProduct = (req, res) => {
   const productId = req.body.productId;
   Product.findByIdAndDelete(productId)
     .then(() => {
