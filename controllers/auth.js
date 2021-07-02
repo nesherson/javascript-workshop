@@ -1,3 +1,5 @@
+const bcrpyt = require('bcryptjs');
+
 const User = require('../models/user');
 
 exports.getLogin = (req, res) => {
@@ -45,16 +47,23 @@ exports.postSignup = (req, res, next) => {
         return res.redirect('/signup');
       }
 
-      const newUser = new User({
-        email: email,
-        password: password,
-        cart: { items: [] },
-      });
+      return bcrpyt
+        .hash(password, 12)
+        .then((hashedPas) => {
+          const newUser = new User({
+            email: email,
+            password: hashedPas,
+            cart: { items: [] },
+          });
 
-      return newUser.save();
-    })
-    .then(() => {
-      res.redirect('/login');
+          return newUser.save();
+        })
+        .then(() => {
+          res.redirect('/login');
+        })
+        .catch((err) => {
+          console.log('controllers/auth/postSignup/bcrpyt err: ', err);
+        });
     })
     .catch((err) => {
       console.log('controllers/auth/postSignup/user.findOne err: ', err);
