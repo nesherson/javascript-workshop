@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const mongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
+const connectFlash = require('connect-flash');
 
 require('dotenv').config();
 
@@ -38,6 +39,7 @@ app.use(
   })
 );
 app.use(csrfProtection);
+app.use(connectFlash());
 
 app.use((req, res, next) => {
   if (!req.session.user) {
