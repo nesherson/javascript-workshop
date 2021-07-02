@@ -12,16 +12,38 @@ exports.getLogin = (req, res) => {
 };
 
 exports.postLogin = (req, res) => {
-  User.findById('60d660c290673c3b6066f4db')
+  const email = req.body.email;
+  const password = req.body.password;
+
+  User.findOne({ email: email })
     .then((user) => {
-      req.session.isLoggedIn = true;
-      req.session.user = user;
-      req.session.save((err) => {
-        if (err) {
-          console.log('controllers/auth/postLogin/sessionSave - err: ', err);
-        }
-        res.redirect('/');
-      });
+      if (!user) {
+        return res.redirect('/login');
+      }
+
+      bcrpyt
+        .compare(password, user.password)
+        .then((match) => {
+          if (match) {
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+            return req.session.save((err) => {
+              if (err) {
+                console.log(
+                  'controllers/auth/postLogin/sessionSave - err: ',
+                  err
+                );
+              }
+              res.redirect('/');
+            });
+          } else {
+            return res.redirect('/login');
+          }
+        })
+        .catch((err) => {
+          console.log('controllers/auth/postLogin/bcrpyt.compare - err: ', err);
+          return res.redirect('/login');
+        });
     })
     .catch((err) => {
       console.log('app/User.findById - err: ', err);
