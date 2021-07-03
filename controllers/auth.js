@@ -1,4 +1,16 @@
 const bcrpyt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+const sendGridTransport = require('nodemailer-sendgrid-transport');
+
+const API_KEY = process.env.API_KEY;
+
+const transporter = nodemailer.createTransport(
+  sendGridTransport({
+    auth: {
+      api_key: API_KEY,
+    },
+  })
+);
 
 const User = require('../models/user');
 
@@ -100,6 +112,19 @@ exports.postSignup = (req, res, next) => {
         })
         .then(() => {
           res.redirect('/login');
+          return transporter
+            .sendMail({
+              to: email,
+              from: 'shop-node123@outlook.com',
+              subject: 'Signup Succeeded!',
+              html: '<h1>You successfully signed up!</h1>',
+            })
+            .catch((err) => {
+              console.log(
+                'controllers/auth/postSignup/transporter.sendMail err: ',
+                err
+              );
+            });
         })
         .catch((err) => {
           console.log('controllers/auth/postSignup/bcrpyt err: ', err);
@@ -116,5 +141,20 @@ exports.postLogout = (req, res) => {
       console.log('controllers/auth/postLogout/sessionDestroy - err: ', err);
     }
     res.redirect('/');
+  });
+};
+
+exports.getReset = (req, res) => {
+  let message = req.flash('error');
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+
+  res.render('auth/reset', {
+    pageTitle: 'Reset Password',
+    path: '/reset',
+    errorMessage: message,
   });
 };
