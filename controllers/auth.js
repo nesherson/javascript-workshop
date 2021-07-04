@@ -32,29 +32,46 @@ exports.getLogin = (req, res) => {
 };
 
 exports.postLogin = (req, res) => {
-  const email = req.body.email;
   const password = req.body.password;
+  const email = req.body.email;
+  const validationErrors = validationResult(req);
 
-  bcrpyt
-    .compare(password, user.password)
-    .then((match) => {
-      if (match) {
-        req.session.isLoggedIn = true;
-        req.session.user = user;
-        return req.session.save((err) => {
-          if (err) {
-            console.log('controllers/auth/postLogin/sessionSave - err: ', err);
+  if (!validationErrors.isEmpty()) {
+    return res.status(422).render('auth/login', {
+      pageTitle: 'Login',
+      path: '/login',
+      errorMessage: validationErrors.array()[0].msg,
+    });
+  }
+  User.findOne({ email: email })
+    .then((user) => {
+      bcrpyt
+        .compare(password, user.password)
+        .then((match) => {
+          if (match) {
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+            return req.session.save((err) => {
+              if (err) {
+                console.log(
+                  'controllers/auth/postLogin/sessionSave - err: ',
+                  err
+                );
+              }
+              res.redirect('/');
+            });
+          } else {
+            req.flash('error', 'Invalid password!');
+            return res.redirect('/login');
           }
-          res.redirect('/');
+        })
+        .catch((err) => {
+          console.log('controllers/auth/postLogin/bcrpyt.compare - err: ', err);
+          return res.redirect('/login');
         });
-      } else {
-        req.flash('error', 'Invalid email or password!');
-        return res.redirect('/login');
-      }
     })
     .catch((err) => {
-      console.log('controllers/auth/postLogin/bcrpyt.compare - err: ', err);
-      return res.redirect('/login');
+      console.log('controllers/auth/postLogin/User.findOne - err: ', err);
     });
 };
 
@@ -75,7 +92,6 @@ exports.getSignup = (req, res, next) => {
 exports.postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  const confirmPassword = req.body.confirmPassword;
   const validationErrors = validationResult(req);
 
   if (!validationErrors.isEmpty()) {
