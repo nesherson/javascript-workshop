@@ -178,7 +178,13 @@ exports.postReset = (req, res) => {
         }
 
         user.resetToken = token;
-        user.resetTokenExpiration = Date.now() + 3600000;
+
+        let date = new Date(Date.now());
+        date.setTime(
+          date.getTime() - new Date().getTimezoneOffset() * 60 * 1000
+        );
+
+        user.resetTokenExpiration = date.getTime() + 3600000;
         return user.save();
       })
       .then(() => {
@@ -196,4 +202,27 @@ exports.postReset = (req, res) => {
         console.log('controllers/auth/postReset/User.findOne - err: ', err);
       });
   });
+};
+
+exports.getNewPassword = (req, res) => {
+  const token = req.params.token;
+  User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
+    .then((user) => {
+      let message = req.flash('error');
+      if (message.length > 0) {
+        message = message[0];
+      } else {
+        message = null;
+      }
+
+      res.render('auth/new-password', {
+        pageTitle: 'New Password',
+        path: '/new-password',
+        errorMessage: message,
+        userId: user._id.toString(),
+      });
+    })
+    .catch((err) => {
+      console.log('controllers/auth/getNewPassword/User.findOne - err: ', err);
+    });
 };
