@@ -14,6 +14,7 @@ const transporter = nodemailer.createTransport(
 );
 
 const User = require('../models/user');
+const user = require('../models/user');
 
 exports.getLogin = (req, res) => {
   let message = req.flash('error');
@@ -220,9 +221,38 @@ exports.getNewPassword = (req, res) => {
         path: '/new-password',
         errorMessage: message,
         userId: user._id.toString(),
+        passwordToken: token,
       });
     })
     .catch((err) => {
       console.log('controllers/auth/getNewPassword/User.findOne - err: ', err);
     });
+};
+
+exports.postNewPassword = (req, res) => {
+  const newPassword = req.body.password;
+  const userId = req.body.userId;
+  const token = req.body.passwordToken;
+
+  let resetUser;
+
+  User.findOne({
+    resetToken: token,
+    resetTokenExpiration: { $gt: Date.now() },
+    _id: userId,
+  })
+    .then((user) => {
+      resetUser = user;
+      return bcrpyt.hash(newPassword, 12);
+    })
+    .then((hashedPassword) => {
+      resetUser.password = hashedPassword;
+      resetUser.resetToken = undefined;
+      resetUser.resetTokenExpiration = undefined;
+      return resetUser.save();
+    })
+    .then(() => {
+      return res.redirect('/login');
+    })
+    .catch((err) => {});
 };
