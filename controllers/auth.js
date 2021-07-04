@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const bcrpyt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const sendGridTransport = require('nodemailer-sendgrid-transport');
+const { validationResult } = require('express-validator/check');
 
 const API_KEY = process.env.API_KEY;
 
@@ -14,7 +15,6 @@ const transporter = nodemailer.createTransport(
 );
 
 const User = require('../models/user');
-const user = require('../models/user');
 
 exports.getLogin = (req, res) => {
   let message = req.flash('error');
@@ -35,40 +35,26 @@ exports.postLogin = (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  User.findOne({ email: email })
-    .then((user) => {
-      if (!user) {
+  bcrpyt
+    .compare(password, user.password)
+    .then((match) => {
+      if (match) {
+        req.session.isLoggedIn = true;
+        req.session.user = user;
+        return req.session.save((err) => {
+          if (err) {
+            console.log('controllers/auth/postLogin/sessionSave - err: ', err);
+          }
+          res.redirect('/');
+        });
+      } else {
         req.flash('error', 'Invalid email or password!');
         return res.redirect('/login');
       }
-
-      bcrpyt
-        .compare(password, user.password)
-        .then((match) => {
-          if (match) {
-            req.session.isLoggedIn = true;
-            req.session.user = user;
-            return req.session.save((err) => {
-              if (err) {
-                console.log(
-                  'controllers/auth/postLogin/sessionSave - err: ',
-                  err
-                );
-              }
-              res.redirect('/');
-            });
-          } else {
-            req.flash('error', 'Invalid email or password!');
-            return res.redirect('/login');
-          }
-        })
-        .catch((err) => {
-          console.log('controllers/auth/postLogin/bcrpyt.compare - err: ', err);
-          return res.redirect('/login');
-        });
     })
     .catch((err) => {
-      console.log('app/User.findById - err: ', err);
+      console.log('controllers/auth/postLogin/bcrpyt.compare - err: ', err);
+      return res.redirect('/login');
     });
 };
 
@@ -90,50 +76,46 @@ exports.postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
+  const validationErrors = validationResult(req);
 
-  User.findOne({ email: email })
-    .then((user) => {
-      if (user) {
-        req.flash(
-          'error',
-          'Email already exists. Please pick a different one.'
-        );
-        return res.redirect('/signup');
-      }
+  if (!validationErrors.isEmpty()) {
+    console.log(validationErrors.array());
+    return res.status(422).render('auth/signup', {
+      path: '/signup',
+      pageTitle: 'Signup',
+      errorMessage: validationErrors.array()[0].msg,
+    });
+  }
 
-      return bcrpyt
-        .hash(password, 12)
-        .then((hashedPas) => {
-          const newUser = new User({
-            email: email,
-            password: hashedPas,
-            cart: { items: [] },
-          });
+  return bcrpyt
+    .hash(password, 12)
+    .then((hashedPas) => {
+      const newUser = new User({
+        email: email,
+        password: hashedPas,
+        cart: { items: [] },
+      });
 
-          return newUser.save();
-        })
-        .then(() => {
-          res.redirect('/login');
-          return transporter
-            .sendMail({
-              to: email,
-              from: 'shop-node123@outlook.com',
-              subject: 'Signup Succeeded!',
-              html: '<h1>You successfully signed up!</h1>',
-            })
-            .catch((err) => {
-              console.log(
-                'controllers/auth/postSignup/transporter.sendMail err: ',
-                err
-              );
-            });
+      return newUser.save();
+    })
+    .then(() => {
+      res.redirect('/login');
+      return transporter
+        .sendMail({
+          to: email,
+          from: 'shop-node123@outlook.com',
+          subject: 'Signup Succeeded!',
+          html: '<h1>You successfully signed up!</h1>',
         })
         .catch((err) => {
-          console.log('controllers/auth/postSignup/bcrpyt err: ', err);
+          console.log(
+            'controllers/auth/postSignup/transporter.sendMail err: ',
+            err
+          );
         });
     })
     .catch((err) => {
-      console.log('controllers/auth/postSignup/user.findOne err: ', err);
+      console.log('controllers/auth/postSignup/bcrpyt err: ', err);
     });
 };
 
