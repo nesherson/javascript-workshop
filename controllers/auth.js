@@ -28,6 +28,11 @@ exports.getLogin = (req, res) => {
     pageTitle: 'Login',
     path: '/login',
     errorMessage: message,
+    validationErrors: [],
+    oldData: {
+      email: '',
+      password: '',
+    },
   });
 };
 
@@ -37,10 +42,16 @@ exports.postLogin = (req, res) => {
   const validationErrors = validationResult(req);
 
   if (!validationErrors.isEmpty()) {
+    console.log(validationErrors);
     return res.status(422).render('auth/login', {
       pageTitle: 'Login',
       path: '/login',
       errorMessage: validationErrors.array()[0].msg,
+      validationErrors: validationErrors.array(),
+      oldData: {
+        email: email,
+        password: password,
+      },
     });
   }
   User.findOne({ email: email })
@@ -61,8 +72,16 @@ exports.postLogin = (req, res) => {
               res.redirect('/');
             });
           } else {
-            req.flash('error', 'Invalid password!');
-            return res.redirect('/login');
+            return res.status(422).render('auth/login', {
+              pageTitle: 'Login',
+              path: '/login',
+              errorMessage: 'Invalid password.',
+              validationErrors: [{ param: 'password' }],
+              oldData: {
+                email: email,
+                password: password,
+              },
+            });
           }
         })
         .catch((err) => {
@@ -86,6 +105,7 @@ exports.getSignup = (req, res, next) => {
     path: '/signup',
     pageTitle: 'Signup',
     errorMessage: message,
+    validationErrors: [],
     oldData: {
       email: '',
       password: '',
@@ -100,11 +120,11 @@ exports.postSignup = (req, res, next) => {
   const validationErrors = validationResult(req);
 
   if (!validationErrors.isEmpty()) {
-    console.log(validationErrors.array());
     return res.status(422).render('auth/signup', {
       path: '/signup',
       pageTitle: 'Signup',
       errorMessage: validationErrors.array()[0].msg,
+      validationErrors: validationErrors.array(),
       oldData: {
         email: email,
         password: password,

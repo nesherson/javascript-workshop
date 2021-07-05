@@ -6,16 +6,6 @@ const User = require('../models/user');
 
 const authController = require('../controllers/auth');
 
-/*
-
-User.findOne({ email: email })
-    .then((user) => {
-      if (!user) {
-        req.flash('error', 'Invalid email or password!');
-        return res.redirect('/login');
-      }
-*/
-
 router.get('/login', authController.getLogin);
 router.post(
   '/login',
