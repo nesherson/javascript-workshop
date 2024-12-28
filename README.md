@@ -1,3 +1,3 @@
 # JavaScript Workshop
 
-### This repo serves for exercising JavaScript
+This repo serves for exercising JavaScript
